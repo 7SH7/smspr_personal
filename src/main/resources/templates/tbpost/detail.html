@@ -11,26 +11,55 @@
 </head>
 <body>
 
-id : <input id="detail_tbpost_id" type="text" />
-title : <input id="detail_tbpost_title" type="text" />
+id :
+<input id="detail_tbpost_id" type="text" readonly/>
+title :
+<input id="detail_tbpost_title" type="text" />
+author :
+<input id="detail_tbpost_author" type="text" />
+content :
+<input id="detail_tbpost_content" type="text" />
 
 <button onclick="detail_tbpost()">detail</button>
 <button onclick="update_tbpost()">update</button>
 
 <script>
+    $(document).ready(()=>{
+        console.log("ready!");
+        detail_tbpost()
+    });
+</script>
+<script>
+    function getIdFromUrl(obj){
+        let temp_url_with_idx = obj;
+        if(obj == null){
+            temp_url_with_idx = window.location.href;
+        }
+        let split_slash_temp_idx = temp_url_with_idx.split('/');
+        let temp_idx = split_slash_temp_idx[split_slash_temp_idx.length - 1];
+        let split_question_temp_idx = temp_idx.split('?');
+        if(split_question_temp_idx.length > 0){
+            temp_idx = split_question_temp_idx[0];
+        }
+        return temp_idx;
+    }
+
     function detail_tbpost() {
         $.ajax({
             url: '/api/tbpost',
             type: 'GET',
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify({
-                id: $('#detail_tbpost_id').val()
+                id: getIdFromUrl(null)
             }),
             cache: false,
             success: (data, status, xhr)=>{
                 // alert('success');
-                alert(JSON.stringify(data));
-                $('#detail_tbpost_title').val(data.title);
+                // alert(JSON.stringify(data));
+                $("#detail_tbpost_id").val(data["id"]);
+                $("#detail_tbpost_title").val(data["title"]);
+                $("#detail_tbpost_author").val(data["author"]);
+                $("#detail_tbpost_content").val(data["content"]);
             },
             error: (data, status, xhr)=>{
                 alert("error!!");
@@ -45,8 +74,10 @@ title : <input id="detail_tbpost_title" type="text" />
             type: 'PUT',
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify({
-                id: $('#detail_tbpost_id').val(),
-                title: $('#detail_tbpost_title').val()
+                id : $("#detail_tbpost_id").val()
+                ,title : $("#detail_tbpost_title").val()
+                ,author : $("#detail_tbpost_author").val()
+                ,content : $("#detail_tbpost_content").val()
             }),
             cache: false,
             success: (data, status, xhr)=>{

@@ -11,7 +11,15 @@
 </head>
 <body>
 
+title :
+<input type="text" id="create_tbpost_title" />
+author :
+<input type="text" id="create_tbpost_author" />
+content :
+<input type="text" id="create_tbpost_content" />
+
 <button onclick="create_tbPost()">create</button>
+<a href="/tbpost/list">link to list</a>
 
 <script>
     function create_tbPost() {
@@ -20,14 +28,14 @@
             type: 'POST',
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify({
-                title: '제목1',
-                author: "작성자1",
-                content: '내용1'
+                title : $("#create_tbpost_title").val()
+                ,author : $("#create_tbpost_author").val()
+                ,content : $("#create_tbpost_content").val()
             }),
             cache: false,
             success: (data, status, xhr)=>{
-                // alert('success');
-                alert(JSON.stringify(data));
+                alert('success');
+                // alert(JSON.stringify(data));
             },
             error: (data, status, xhr)=>{
                 alert("error!!");

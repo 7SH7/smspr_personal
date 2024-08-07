@@ -14,4 +14,9 @@ public class TbPostController {
 		return "tbPost/" + page;
 	}
 
+	@GetMapping("/{page}/{id}")
+	public String page(@PathVariable String page, @PathVariable String id){
+		return "tbpost/" + page;
+	}
+
 }
