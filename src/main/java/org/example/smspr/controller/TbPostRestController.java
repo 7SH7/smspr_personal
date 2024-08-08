@@ -71,12 +71,24 @@ public class TbPostRestController {
 
 	@Operation(summary = "게시글 목록 페이지 조회",
 		description = "게시글 목록 페이지 조회 컨트롤러 <br />"
-			+ "@param TbpostDto.ListReqDto <br />"
-			+ "@return HttpStatus.OK(200) ResponseEntity\\<TbpostDto.SelectResDto\\> <br />"
+			+ "@param TbpostDto.PagedListReqDto <br />"
+			+ "@return HttpStatus.OK(200) ResponseEntity\\<TbpostDto.PagedListResDto\\> <br />"
 			+ "@exception 필수 파라미터 누락하였을 때 등 <br />"
 	)
 	@GetMapping("/plist")
 	public ResponseEntity<TbPostDto.PagedListResDto> plist(@Valid TbPostDto.PagedListReqDto param){
 		return ResponseEntity.status(HttpStatus.OK).body(tbPostService.pagedList(param));
 	}
+
+	@Operation(summary = "게시글 목록 스크롤 조회",
+		description = "게시글 목록 스크롤 조회 컨트롤러 <br />"
+			+ "@param TbpostDto.MoreListReqDto <br />"
+			+ "@return HttpStatus.OK(200) ResponseEntity\\<TbpostDto.SelectResDto\\> <br />"
+			+ "@exception 필수 파라미터 누락하였을 때 등 <br />"
+	)
+	@GetMapping("/mlist")
+	public ResponseEntity<List<TbPostDto.SelectResDto>> mlist(@Valid TbPostDto.ScrollListReqDto param){
+		return ResponseEntity.status(HttpStatus.OK).body(tbPostService.scrollList(param));
+	}
+
 }

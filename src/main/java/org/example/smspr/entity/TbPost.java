@@ -12,7 +12,8 @@ import org.example.smspr.entity.base.AuditingFields;
 	@Index(columnList = "deleted"),
 	@Index(columnList = "process"),
 	@Index(columnList = "createdAt"),
-	@Index(columnList = "modifiedAt")
+	@Index(columnList = "modifiedAt"),
+	@Index(columnList = "title")
 })  // 다중 index 설정
 public class TbPost extends AuditingFields {
 

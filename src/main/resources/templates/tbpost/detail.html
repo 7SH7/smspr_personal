@@ -41,6 +41,7 @@ content :
         if(split_question_temp_idx.length > 0){
             temp_idx = split_question_temp_idx[0];
         }
+        // console.log("temp_idx : " + temp_idx);
         return temp_idx;
     }
 
@@ -49,9 +50,9 @@ content :
             url: '/api/tbpost',
             type: 'GET',
             contentType: 'application/json; charset=utf-8',
-            data: JSON.stringify({
+            data: {
                 id: getIdFromUrl(null)
-            }),
+            },
             cache: false,
             success: (data, status, xhr)=>{
                 // alert('success');
