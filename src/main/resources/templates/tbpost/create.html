@@ -19,7 +19,7 @@ content :
 <input type="text" id="create_tbpost_content" />
 
 <button onclick="create_tbPost()">create</button>
-<a href="/tbpost/list">link to list</a>
+<a href="/tbPost/list">link to list</a>
 
 <script>
     function create_tbPost() {
@@ -28,22 +28,20 @@ content :
             type: 'POST',
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify({
-                title : $("#create_tbpost_title").val()
-                ,author : $("#create_tbpost_author").val()
-                ,content : $("#create_tbpost_content").val()
+                title : $("#create_tbpost_title").val(),
+                author : $("#create_tbpost_author").val(),
+                content : $("#create_tbpost_content").val()
             }),
-            cache: false,
-            success: (data, status, xhr)=>{
-                alert('success');
-                // alert(JSON.stringify(data));
+            success: function(response) {
+                alert('Post created successfully');
+                window.location.href = '/tbPost/list';
             },
-            error: (data, status, xhr)=>{
-                alert("error!!");
-                alert(JSON.stringify(data));
+            error: function(error) {
+                alert('Error creating post');
+                console.log(error);
             }
         });
     }
 </script>
-
 </body>
 </html>

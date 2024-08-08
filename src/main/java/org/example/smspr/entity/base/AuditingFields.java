@@ -7,6 +7,7 @@ import lombok.ToString;
 import org.mariadb.jdbc.internal.failover.impl.AuroraListener;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
@@ -14,7 +15,7 @@ import java.util.UUID;
 
 @Getter
 @ToString
-@EntityListeners(AuroraListener.class) // AuroraListener.class는 커스텀 리스너 클래스를 지정하여, 엔티티의 상태 변화(예: 저장, 삭제 등)에 따라 특정 작업을 수행할 수 있도록 합니다.
+@EntityListeners(AuditingEntityListener.class) // AuditingEntityListener.class는 커스텀 리스너 클래스를 지정하여, 엔티티의 상태 변화(예: 저장, 삭제 등)에 따라 특정 작업을 수행할 수 있도록 합니다.
 @MappedSuperclass // 상위 클래스를 정의하여 하위 클래스에서 상속받을 수 있는 매핑 정보를 제공합니다.
 public abstract class AuditingFields {
 

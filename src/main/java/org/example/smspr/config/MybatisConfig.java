@@ -22,8 +22,8 @@ public class MybatisConfig {
 		SqlSessionFactoryBean sessionFactoryBean = new SqlSessionFactoryBean(); // bean 주입.
 		// bean 주입 이유 : Bean 주입의 이유: 기존에 만들어진 객체를 커스터마이즈하여 사용하고 싶을 때 사용
 		sessionFactoryBean.setDataSource(dataSource);   // DB 연결 담당
-		sessionFactoryBean.setTypeAliasesPackage("org.example.smspr.dto"); // MyBatis에서 사용할 type 별칭의 패키지 설정
-		sessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath:mapper/*.xml")); // mapper xml 파일 위치 설정
+		sessionFactoryBean.setTypeAliasesPackage("org.example.smspr.dto.controller"); // MyBatis에서 사용할 type 별칭의 패키지 설정
+		sessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath:/mapper/*.xml")); // mapper xml 파일 위치 설정
 		return sessionFactoryBean.getObject();
 	}
 

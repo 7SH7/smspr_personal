@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.example.smspr.entity.TbPost;
 
+import java.util.List;
+
 public class TbPostDto {
 
 	@Schema
@@ -128,6 +130,64 @@ public class TbPostDto {
 		@Schema(description = "author", example = "")
 		private String author;
 	}
+
+	@Schema
+	@Setter
+	@Getter
+	@AllArgsConstructor
+	@NoArgsConstructor
+	@Builder
+	public static class PagedListReqDto {
+
+		@Schema(description = "callpage", example="")
+		private Integer callpage;
+		@Schema(description = "perpage", example="")
+		private Integer perpage;
+		@Schema(description = "orderby", example="")
+		private String orderby;
+		@Schema(description = "orderway", example="")
+		private String orderway;
+
+		//원래는 고객한테 받으면 안되는 정보!
+		@Schema(description = "offset", example="")
+		private Integer offset;
+
+		@Schema(description = "deleted", example="")
+		private String deleted;
+		@Schema(description = "title", example="")
+		private String title;
+		@Schema(description = "author", example="")
+		private String author;
+
+	}
+
+	@Schema
+	@Setter
+	@Getter
+	@AllArgsConstructor
+	@NoArgsConstructor
+	@Builder
+	public static class PagedListResDto {
+
+		@Schema(description = "callpage", example="")
+		private Integer callpage;
+		@Schema(description = "perpage", example="")
+		private Integer perpage;
+		@Schema(description = "orderby", example="")
+		private String orderby;
+		@Schema(description = "orderway", example="")
+		private String orderway;
+
+		@Schema(description = "listsize", example="")
+		private Integer listsize;
+		@Schema(description = "pagesize", example="")
+		private Integer pagesize;
+
+		@Schema(description = "list", example="")
+		private List<SelectResDto> list;
+
+	}
+
 
 
 }

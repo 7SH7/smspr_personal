@@ -1,30 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0/EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.thc.smspr.mapper.tbPostMapper">
+<mapper namespace="org.example.smspr.mapper.TbPostMapper">
 
 <!-- -->
-    <select id="detail" parameterType="hashMap" resultType="com.thc.smspr.model.tbPost$SelectResDto">
-        SELECT tbPost.id
-             ,tbPost.deleted
-             ,tbPost.process
-             ,tbPost.created_at as createdAt
-             ,tbPost.modified_at as modifiedAt
+    <select id="detail" parameterType="hashMap" resultType="org.example.smspr.dto.controller.TbPostDto$SelectResDto">
+        SELECT tb_post.id
+             ,tb_post.deleted
+             ,tb_post.process
+             ,tb_post.created_at as createdAt
+             ,tb_post.modified_at as modifiedAt
 
-             ,tbPost.title
-             ,tbPost.author
-             ,tbPost.content
-        FROM tbPost
-        WHERE tbPost.id = #{id}
-    
+             ,tb_post.title
+             ,tb_post.author
+             ,tb_post.content
+        FROM tb_post
+        WHERE tb_post.id = #{id}
     </select>
-    
-    <select id="List" parameterType="hashMap" resultType="com.thc.smspr.model.tbPost$SelectResDto">
-        SELECT tbPost.id FROM tbPost
-        WHERE tbPost.id is not NULL
-        <if test = "deleted != null and deleted !=''">AND tbpost.deleted = #{deleted}</if>
-        <if test = "title != null and title !=''">AND tbPost.title LIKE CONCAT('%', #{title}, '%')</if>
-        <if test = "author != null and author !=''">AND tbPost.author LIKE CONCAT('%', #{author}, '%')</if>
-        ORDER BY tbPost.created_at DESC
+    <select id="list" parameterType="hashMap" resultType="org.example.smspr.dto.controller.TbPostDto$SelectResDto">
+        SELECT tb_post.id FROM tb_post
+        WHERE tb_post.id is not NULL
+        <if test = "deleted != null and deleted !=''">AND tb_post.deleted = #{deleted}</if>
+        <if test = "title != null and title !=''">AND tb_post.title LIKE CONCAT('%', #{title}, '%')</if>
+        <if test = "author != null and author !=''">AND tb_post.author LIKE CONCAT('%', #{author}, '%')</if>
+        ORDER BY tb_post.created_at DESC
     </select>
-    
+
+
+    <select id="pagedList" parameterType="hashMap" resultType="org.example.smspr.dto.controller.TbPostDto$SelectResDto">
+        SELECT tb_post.id
+        FROM tb_post
+        WHERE tb_post.id is not NULL
+        <if test = "deleted != null and deleted !=''">AND tb_post.deleted = #{deleted}</if>
+        <if test = "title != null and title !=''">AND tb_post.title LIKE CONCAT('%', #{title}, '%')</if>
+        <if test = "author != null and author !=''">AND tb_post.author LIKE CONCAT('%', #{author}, '%')</if>
+
+        <if test = "orderby =='created_at'">ORDER BY tb_post.created_at </if>
+        <if test = "orderby =='title'">ORDER BY tb_post.title </if>
+        <if test = "orderway =='asc'">ASC</if>
+        <if test = "orderway =='desc'">DESC</if>
+        LIMIT #{offset}, #{perpage}
+    </select>
+    <select id="pagedListCount" parameterType="hashMap" resultType="Integer">
+        SELECT count(tb_post.id) as listsize
+        FROM tb_post
+        WHERE tb_post.id is not NULL
+        <if test = "deleted != null and deleted !=''">AND tb_post.deleted = #{deleted}</if>
+        <if test = "title != null and title !=''">AND tb_post.title LIKE CONCAT('%', #{title}, '%')</if>
+        <if test = "author != null and author !=''">AND tb_post.author LIKE CONCAT('%', #{author}, '%')</if>
+    </select>
+
 </mapper>

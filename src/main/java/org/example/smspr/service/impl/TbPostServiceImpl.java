@@ -75,5 +75,73 @@ public class TbPostServiceImpl implements TbPostService {
 
 		return selectResDtoList;
 	}
+
+
+	@Override
+	public TbPostDto.PagedListResDto pagedList(TbPostDto.PagedListReqDto param){
+
+		String orderby = param.getOrderby();
+		if(orderby == null || orderby.isEmpty()){
+			orderby = "created_at";
+		}
+		String orderway = param.getOrderway();
+		if(orderway == null || orderway.isEmpty()){
+			orderway = "desc";
+		}
+		Integer perpage = param.getPerpage();
+		if(perpage == null || perpage < 1){
+			//한번에 조회할 글 갯수
+			perpage = 10;
+		}
+		Integer callpage = param.getCallpage();
+		if(callpage == null){
+			//호출하는 페이지
+			callpage = 1;
+		}
+		if(callpage < 1){
+			callpage = 1;
+		}
+
+		//offset 을 계산하기 위해서는 전체 글 갯수가 필요합니다!
+		int listsize = tbPostMapper.pagedListCount(param);
+        /*
+        총 글 등록 수 : 127 개
+        총 페이지 수 : 13개 (10개씩 보는 기준)
+        내가 2페이지를 호출한다면 몇번째 부터 보면 될까요?! 11번째 => 10(offset)
+        */
+		int pagesize = listsize / perpage;
+		if(listsize % perpage > 0){
+			pagesize++;
+		}
+		if(callpage > pagesize){
+			callpage = pagesize;
+		}
+		int offset = (callpage - 1) * perpage;
+		param.setOrderby(orderby);
+		param.setOrderway(orderway);
+		param.setOffset(offset);
+		param.setPerpage(perpage);
+		//1페이지일때 0
+		//2페이지 일때 10
+
+		List<TbPostDto.SelectResDto> list = tbPostMapper.pagedList(param);
+		List<TbPostDto.SelectResDto> newList = new ArrayList<>();
+		for(TbPostDto.SelectResDto each : list){
+			newList.add(detail(TbPostDto.SelectReqDto.builder().id(each.getId()).build()));
+		}
+
+		TbPostDto.PagedListResDto returnVal =
+			TbPostDto.PagedListResDto.builder()
+				.callpage(callpage)
+				.perpage(perpage)
+				.orderby(orderby)
+				.orderway(orderway)
+				.listsize(listsize)
+				.pagesize(pagesize)
+				.list(newList)
+				.build();
+
+		return returnVal;
+	}
 }
 

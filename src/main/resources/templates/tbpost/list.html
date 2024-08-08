@@ -79,7 +79,7 @@ author :
             cache: false,
             success: (data, status, xhr)=>{
                 //alert("success!!");
-                //alert(JSON.stringify(data));
+                alert(JSON.stringify(data));
                 $("#tbody_tbpost_list").html("");
                 let a_list = data;
                 $("#tbody_tbpost_list").append(list_info_tbpost_template({"resultData_tbpost":a_list}));
