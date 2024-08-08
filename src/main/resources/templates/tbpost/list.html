@@ -12,10 +12,11 @@
 </head>
 <body>
 
-<!--이 밑은 handler라는데 뭔지 잘 모르겠음.-->
+<!--이 밑은 handler <- rendering하는 그런 것으로 생각하면 될 듯.-->
 <script id="list_info_tbpost" type="text/x-handlebars-template">
   {{#resultData_tbpost}}
     <tr class="gradeA">
+      <td><font class="font_tbpost_order">-</font></td>
       <td><font class="font_deleted_{{deleted}} chk_deleted_{{id}}">{{deleted}}</font></td>
       <td><a href="/tbPost/detail/{{id}}">{{title}}</a></td>
       <td>{{createdAt}} / {{modifiedAt}}</td>
@@ -84,6 +85,10 @@ author :
                 let a_list = data;
                 $("#tbody_tbpost_list").append(list_info_tbpost_template({"resultData_tbpost":a_list}));
 
+                let font_tbpost_order = $(".font_tbpost_order");
+                for(let i=0;i<font_tbpost_order.length;i++){
+                    $(font_tbpost_order[i]).text((i+1));
+                }
             },
             error: (data, status, xhr)=>{
                 alert("error!!");
