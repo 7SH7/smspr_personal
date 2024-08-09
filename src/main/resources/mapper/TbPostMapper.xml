@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0/EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.smspr.mapper.TbPostMapper">
+
+    <!-- -->
+    <select id="detail" parameterType="hashMap" resultType="org.example.smspr.dto.controller.TbPostDto$SelectResDto">
+        SELECT tb_post.id
+             ,tb_post.deleted
+             ,tb_post.process
+             ,tb_post.created_at as createdAt
+             ,tb_post.modified_at as modifiedAt
+
+             ,tb_post.title
+             ,tb_post.author
+             ,tb_post.content
+        FROM tb_post
+        WHERE tb_post.id = #{id}
+    </select>
+    <select id="list" parameterType="hashMap" resultType="org.example.smspr.dto.controller.TbPostDto$SelectResDto">
+        SELECT tb_post.id FROM tb_post
+        WHERE tb_post.id is not NULL
+        <if test = "deleted != null and deleted !=''">AND tb_post.deleted = #{deleted}</if>
+        <if test = "title != null and title !=''">AND tb_post.title LIKE CONCAT('%', #{title}, '%')</if>
+        <if test = "author != null and author !=''">AND tb_post.author LIKE CONCAT('%', #{author}, '%')</if>
+        ORDER BY tb_post.created_at DESC
+    </select>
+
+
+    <select id="pagedList" parameterType="hashMap" resultType="org.example.smspr.dto.controller.TbPostDto$SelectResDto">
+        SELECT tb_post.id
+        FROM tb_post
+        WHERE tb_post.id is not NULL
+        <if test = "deleted != null and deleted !=''">AND tb_post.deleted = #{deleted}</if> <!-- deleted(FE로부터 받아온)가 null이 아니고 ''이 아니면, 이 조건도 탐색한다.-->
+        <if test = "title != null and title !=''">AND tb_post.title LIKE CONCAT('%', #{title}, '%')</if> <!-- title(FE로부터 받아온)가 제목 중도에 껴 있는지 확인한다.-->
+        <if test = "author != null and author !=''">AND tb_post.author LIKE CONCAT('%', #{author}, '%')</if>
+
+        <if test = "orderby =='created_at'">ORDER BY tb_post.created_at </if>
+        <if test = "orderby =='title'">ORDER BY tb_post.title </if>
+        <if test = "orderway =='asc'">ASC</if>
+        <if test = "orderway =='desc'">DESC</if>
+        LIMIT #{offset}, #{perpage} <!-- offset번째 게시물부터부터 perpage개의 게시물을 띄워주겠다.-->
+    </select>
+    <select id="pagedListCount" parameterType="hashMap" resultType="Integer">
+        SELECT count(tb_post.id) as listsize
+        FROM tb_post
+        WHERE tb_post.id is not NULL
+        <if test = "deleted != null and deleted !=''">AND tb_post.deleted = #{deleted}</if>
+        <if test = "title != null and title !=''">AND tb_post.title LIKE CONCAT('%', #{title}, '%')</if>
+        <if test = "author != null and author !=''">AND tb_post.author LIKE CONCAT('%', #{author}, '%')</if>
+    </select>
+
+    <select id="scrollList" parameterType="hashMap" resultType="org.example.smspr.dto.controller.TbPostDto$SelectResDto">
+        SELECT tb_post.id
+        FROM tb_post
+        WHERE tb_post.id is not NULL
+        <if test = "deleted != null and deleted !=''">AND tb_post.deleted = #{deleted}</if> <!-- 앞의 조건이 선행하면, and 뒤의 조건도 확인한다 -->
+        <if test = "title != null and title !=''">AND tb_post.title LIKE CONCAT('%', #{title}, '%')</if>
+        <if test = "author != null and author !=''">AND tb_post.author LIKE CONCAT('%', #{author}, '%')</if>
+
+        <if test = "orderby =='created_at'">
+            <if test = "orderway =='desc'">
+                -- cursor 값을 날짜 형식으로 변환하여 tb_post.created_at 필드와 비교합니다. 즉, cursor로 지정된 날짜 이후에 생성된 게시물만 결과에 포함됩니다.
+                <if test = "cursor != null and cursor !=''">AND STR_TO_DATE(#{cursor}, '%Y-%m-%d %H:%i:%s.%f') > tb_post.created_at </if>
+                ORDER BY tb_post.created_at DESC
+            </if>
+            <if test = "orderway =='asc'">
+                <if test = "cursor != null and cursor !=''">AND tb_post.created_at > STR_TO_DATE(#{cursor}, '%Y-%m-%d %H:%i:%s.%f')</if>
+                ORDER BY tb_post.created_at ASC
+            </if>
+        </if>
+
+        <if test = "orderby =='title'">
+            <if test = "orderway =='desc'">
+                <if test = "cursor != null and cursor !=''">AND #{cursor} > tb_post.title</if>
+                ORDER BY tb_post.title DESC
+            </if>
+            <if test = "orderway =='asc'">
+                <if test = "cursor != null and cursor !=''">AND tb_post.title > #{cursor}</if>
+                ORDER BY tb_post.title ASC
+            </if>
+        </if>
+
+--      제한을 0부터 perpage까지 두겠다. (perpage개수만큼 띄워주겠다.)
+        LIMIT 0, #{perpage}
+
+    </select>
+
+</mapper>

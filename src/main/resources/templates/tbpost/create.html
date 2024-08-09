@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Create</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+
+title :
+<input type="text" id="create_tbpost_title" />
+author :
+<input type="text" id="create_tbpost_author" />
+content :
+<input type="text" id="create_tbpost_content" />
+
+<button onclick="create_tbPost()">create</button>
+<a href="/tbPost/list">link to list</a>
+
+<script>
+    function create_tbPost() {
+        $.ajax({
+            url: '/api/tbpost',
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({
+                title : $("#create_tbpost_title").val(),
+                author : $("#create_tbpost_author").val(),
+                content : $("#create_tbpost_content").val()
+            }),
+            success: function(response) {
+                alert('Post created successfully');
+                window.location.href = '/tbPost/list';
+            },
+            error: function(error) {
+                alert('Error creating post');
+                console.log(error);
+            }
+        });
+    }
+</script>
+</body>
+</html>

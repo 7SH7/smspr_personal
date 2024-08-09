@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Index</title>
+<!--  이 밑의 코드는 jQuery를 사용하겠다는 의미-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+
+<button onclick="test()">test</button>
+
+<script>
+  function test(){
+      $.ajax({
+          url: "/api/test",
+          type: "GET",
+          contentType: 'application/json; charset=utf-8',
+          data: {},
+          cache: false,
+          // 밑의 3개에 대한 건 좀 더 확인 필요. -> ajax 강의 youtube에서 찾아보기
+          // data: 실제 받는 data
+          // status : 그냥 상황
+          // xhr : response 전체를 까보고 싶을 때..
+          success:  (data, status, xhr) => {
+              alert(JSON.stringify(data));
+          },
+          error: function (data, status, xhr) {
+              console.log("error");
+              alert(JSON.stringify(data));
+          }
+      });
+  }
+</script>
+
+</body>
+</html>
