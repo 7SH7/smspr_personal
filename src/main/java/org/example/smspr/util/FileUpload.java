@@ -12,8 +12,10 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
@@ -80,7 +82,8 @@ public class FileUpload {
 		return returnValue;
 	}
 
-	private String setFileName(MultipartFile files) {
+	// time(now) + filename 해주는 것
+	private static String setFileName(MultipartFile files) {
 		String result = "";
 
 		// files는 단일 string이 아니라서 이렇게 처리 하는 것.
@@ -107,7 +110,54 @@ public class FileUpload {
 	}
 
 	public static String local(MultipartFile files, HttpServletRequest request) {
+		// local은 주소 직접 지정이 필요함.
+		String returnValue = "";
+		try{
+			String root_path = path(request);   // 현재 파일의 위치를 가져와서, 파일 위치가 C:/ 에 있는 것이 맞는지 확인 후, 저장하고자 하는 위치로 일부 주소 변경
+			setDir(root_path);   // 저장하고자 하는 곳의 풀더의 유무 확인.
+			String fileName = setFileName(files); // 파일 이름 수정
 
+			// File 도구(Util)를 통해 copy(저장하는 거임!)
+			FileCopyUtils.copy(files.getBytes(), new File(root_path + fileName));
+			
+			// 주소 지정
+			returnValue = "/uploadfile/" + fileName;
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		return returnValue;
+	}
+
+	private static void setDir(String rootPath) {
+		// directory 주소에 대해서, file 객체에 담음. (풀더를..)
+		File newfile = new File(rootPath);
+
+		if(!newfile.exists()) newfile.mkdir();
+	}
+
+	public static String
+	path(HttpServletRequest request) throws IOException{
+		String root_path = rootPath(request);
+
+		// 서버 upload 이후를 위한 코드
+		root_path = root_path.replace("wtpwebapps", "uploadfiles");   // wtpwebapps는 Eclipse와 같은 IDE에서 개발할 때 사용되는 임시 경로
+		root_path = root_path.replace("webapps", "uploadfiles");   // Tomcat의 경우 애플리케이션이 webapps 폴더 아래에 위치.
+
+		// local server를 위한..
+		if(root_path.indexOf("C:/") == 0){  // window || C:/는 제일 앞에 붙으니, 0번째에 위치해 있으면..
+			root_path = "C:/workspace/";
+		} else if(root_path.indexOf("Users/") == 0){  // mac  || 마찬가지로 처음에 위치해 있으면..
+			root_path = "Users/workspace/";
+		}
+
+		String attachedPath = "uploadfiles/smspr/";
+		return root_path + attachedPath;
+	}
+
+	private static String rootPath(HttpServletRequest request) {
+		String rootPath = request.getSession().getServletContext().getRealPath("/");
+		rootPath = rootPath.replace("\\","/");
+		return rootPath;
 	}
 
 
