@@ -17,6 +17,84 @@ author :
 <input type="text" id="create_tbpost_author" />
 content :
 <input type="text" id="create_tbpost_content" />
+file :
+<button onclick="$('#create_tbpost_img').trigger('click')">gogo upload</button>
+
+<label for="create_tbpost_img">파일 업로드 하겠습니다.</label>
+
+<input type="file" id="create_tbpost_img" onchange="readURLFile(this)" accept="image/*" />
+<img id="img_tbpost_content" alt="" />
+
+<!--<input type="file" id="create_tbpost_img" onchange="readURLFile(this)" accept="image/*"/>-->
+
+<!-- 개념
+// val : form 요소 (input, textarea, select, ..)
+값 가져오기 : var inputValue = $('#myInput').val();
+값 설정하기 : $('#myInput').val('새로운 값');  -> val(여기에 들어가 있으면 설정!)
+
+// attr : html 요소의 속성
+속성 가져오기 : var srcValue = $('#myImage').attr('src');  -> 하나만 있으면 가져오는 거!
+속성 설정하기 : $('#myImage').attr('src', 'new-image.png'); -> 둘 다 있으면, 넣는 것
+-->
+
+<script>
+  let limit_each_file_size = 10;
+  function readURLFile(input){
+      let temp_id = $(input).attr("id") + "";
+      if(input.files && input.files[0]) {
+          let render = new FileReader();
+          reader.readAsDataURL(input.files[0]);
+          reader.onload = (e) => {
+              let temp_each_file_size = input.files[0].size / (1024 * 1024);
+              if(temp_each_file_size > limit_each_file_size) {
+                  alert("파일 1개당 " + limit_each_file_size + "MB 용량 제한 초과했습니다!")
+                  $(input).val("");
+                  return false;
+              }
+              let file_type = "image";
+              if (!input.files[0].type.match('image.*')) {
+                  file_type = "file";
+              } else {
+                  file_type = "image";
+              }
+              alert(input.files[0].name);
+              listener_upload_file(input.files[0]);
+          }
+      }
+  }
+
+  function listener_upload_file(obj_file){
+      let fileData = new FormData();
+      fileData.append("file", obj_file);
+
+      $.ajax({
+          url: "/api/default/uploadFile",
+          type: "POST",
+          data: fileData ,
+          cache : false,
+          contentType : false,
+          processData : false,
+          success: (data, status, xhr)=>{
+              //alert(xhr.status);
+              switch(xhr.status){
+                  case 201:
+                      alert(JSON.stringify(data));
+                      alert(data.url);
+
+                      // BE에서 불러온 값을 넣어주는 것!
+                      $("#create_tbpost_content").val(data.url);
+                      $("#img_tbpost_content").attr("src", data.url);
+                      break;
+                  default:
+                      console.log("no matching status code");
+              }
+          },
+          error: (data)=>{
+              alert("error")
+          },
+      });
+  }
+</script>
 
 <button onclick="create_tbPost()">create</button>
 <a href="/tbPost/list">link to list</a>

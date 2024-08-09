@@ -20,6 +20,9 @@ author :
 content :
 <input id="detail_tbpost_content" type="text" />
 
+<img id="detail_tbpost_content_img" alt="123" />
+<a id="detail_tbpost_content_file" href=""> 다운로드</a>
+
 <button onclick="detail_tbpost()">detail</button>
 <button onclick="update_tbpost()">update</button>
 
@@ -54,13 +57,21 @@ content :
                 id: getIdFromUrl(null)
             },
             cache: false,
-            success: (data, status, xhr)=>{
+            success: (data, status, xhr)=> {
                 // alert('success');
                 // alert(JSON.stringify(data));
-                $("#detail_tbpost_id").val(data["id"]);
+                $("#detail_tbpost_id").val(data["id"]); // .val은 속성 가져오기
                 $("#detail_tbpost_title").val(data["title"]);
                 $("#detail_tbpost_author").val(data["author"]);
                 $("#detail_tbpost_content").val(data["content"]);
+
+                // $("#detail_tbpost_content_img").attr("src", data["content"]);  // .attr은 속성 설정해주기
+
+                let download_file = data["content"];
+                download_file = download_file.replace("/uploadfile/", "");
+                download_file = "/download/" + download_file;
+
+                $("#detail_tbpost_content_file").attr("href", download_file);
             },
             error: (data, status, xhr)=>{
                 alert("error!!");
