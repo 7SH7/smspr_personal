@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>index</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+title :
+<input type="text" id="create_tbboard_title" />
+author :
+<input type="text" id="create_tbboard_author" />
+content :
+<input type="text" id="create_tbboard_content" />
+
+<button onclick="create_tbboard()">create</button>
+<a href="/tbBoard/list">link to list</a>
+
+<script>
+    function create_tbboard(){
+        $.ajax({
+            url: "/api/tbboard",
+            type: "POST",
+            contentType : 'application/json; charset=utf-8',
+            data: JSON.stringify({
+                title : $("#create_tbboard_title").val()
+                ,author : $("#create_tbboard_author").val()
+                ,content : $("#create_tbboard_content").val()
+            }),
+            cache: false,
+            success: (data, status, xhr)=>{
+                alert("success!!");
+                //alert(JSON.stringify(data));
+            },
+            error: (data, status, xhr)=>{
+                alert("error!!");
+                alert(JSON.stringify(data));
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

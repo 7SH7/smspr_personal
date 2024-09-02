@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>index</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.8/handlebars.min.js"></script>
+</head>
+<body>
+
+<script id="list_info_tbboard" type="text/x-handlebars-template">
+  {{#resultData_tbboard}}
+    <tr class="gradeA">
+      <td><font class="font_tbboard_order">-</font></td>
+      <td><font class="font_deleted_{{deleted}} chk_deleted_{{id}}">{{deleted}}</font></td>
+      <td><a href="/tbBoard/detail/{{id}}">{{title}}</a></td>
+      <td>{{createdAt}} / {{modifiedAt}}</td>
+    </tr>
+  {{/resultData_tbboard}}
+</script>
+<script type="text/javascript">
+    var list_info_tbboard = $("#list_info_tbboard").html();
+    var list_info_tbboard_template = Handlebars.compile(list_info_tbboard);
+</script>
+
+deleted :
+<select id="detail_tbboard_deleted">
+  <option value="" selected="selected">전체</option>
+  <option value="N">일반</option>
+  <option value="Y">삭제</option>
+</select>
+title :
+<input id="detail_tbboard_title" type="text" />
+author :
+<input id="detail_tbboard_author" type="text" />
+
+<button onclick="list_tbboard()">list</button>
+
+<div>
+  <table>
+    <thead>
+    <tr>
+      <th>삭제여부</th>
+      <th>제목</th>
+      <th>일시</th>
+    </tr>
+    </thead>
+    <tbody id="tbody_tbboard_list">
+    </tbody>
+  </table>
+</div>
+<script>
+    $( document ).ready(function() {
+        console.log( "ready!" );
+        list_tbboard();
+    });
+</script>
+<script>
+    function list_tbboard(){
+        $.ajax({
+            url: "/api/tbboard/list",
+            type: "GET",
+            contentType : 'application/json; charset=utf-8',
+            data: {
+                deleted : $("#detail_tbboard_deleted").val()
+                , title : $("#detail_tbboard_title").val()
+                , author : $("#detail_tbboard_author").val()
+            },
+            cache: false,
+            success: (data, status, xhr)=>{
+                //alert("success!!");
+                //alert(JSON.stringify(data));
+                $("#tbody_tbboard_list").html("");
+                let a_list = data;
+                $("#tbody_tbboard_list").append(list_info_tbboard_template({"resultData_tbboard":a_list}));
+
+                let font_tbboard_order = $(".font_tbboard_order");
+                for(let i=0;i<font_tbboard_order.length;i++){
+                    $(font_tbboard_order[i]).text((i+1));
+                }
+
+
+            },
+            error: (data, status, xhr)=>{
+                alert("error!!");
+                alert(JSON.stringify(data));
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
