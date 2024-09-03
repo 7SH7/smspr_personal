@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>index</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+username :
+<input type="text" id="create_tbuser_username" />
+password :
+<input type="text" id="create_tbuser_password" />
+
+<button onclick="login()">login</button>
+
+<script>
+    function login(){
+        $.ajax({
+            url: "/api/tbuser/login",
+            type: "POST",
+            contentType : 'application/json; charset=utf-8',
+            data: JSON.stringify({
+                username : $("#create_tbuser_username").val()
+                ,password : $("#create_tbuser_password").val()
+            }),
+            cache: false,
+            success: (data, status, xhr)=>{
+                if(data["id"] === "not matched"){
+                    alert("아이디와 비밀번호가 올바르지 않습니다.");
+                } else {
+                    location.replace("/index");
+                }
+                //alert(JSON.stringify(data));
+            },
+            error: (data, status, xhr)=>{
+                alert("error!!");
+                alert(JSON.stringify(data));
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

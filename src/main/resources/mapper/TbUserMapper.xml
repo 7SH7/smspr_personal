@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0/EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.smspr.mapper.TbUserMapper">
+    <select id="login" parameterType="hashMap" resultType="org.example.smspr.dto.controller.TbUserDto$SelectResDto">
+        SELECT tb_user.id
+        FROM tb_user
+        WHERE tb_user.username = #{username}
+          AND tb_user.password = #{password}
+    </select>
+
+    <select id="detail" parameterType="hashMap" resultType="org.example.smspr.dto.controller.TbUserDto$SelectResDto">
+        SELECT tb_user.id
+             ,tb_user.deleted
+             ,tb_user.process
+             ,tb_user.created_at as createdAt
+             ,tb_user.modified_at as modifiedAt
+
+             ,tb_user.username
+             ,tb_user.password
+             ,tb_user.name
+             ,tb_user.nick
+             ,tb_user.phone
+             ,tb_user.gender
+             ,tb_user.content
+             ,tb_user.img
+        FROM tb_user
+        WHERE tb_user.id = #{id}
+    </select>
+
+    <select id="list" parameterType="hashMap" resultType="org.example.smspr.dto.controller.TbUserDto$SelectResDto">
+        SELECT tb_user.id FROM tb_user
+        WHERE tb_user.id is not NULL
+        <if test = "deleted != null and deleted !=''">AND tb_user.deleted = #{deleted}</if>
+        <if test = "process != null and process !=''">AND tb_user.process = #{process}</if>
+        <if test = "name != null and name !=''">AND tb_user.name LIKE CONCAT('%', #{name}, '%')</if>
+        <if test = "nick != null and nick !=''">AND tb_user.nick = #{nick}</if>
+        <if test = "phone != null and phone !=''">AND tb_user.phone LIKE CONCAT('%', #{phone})</if>
+        ORDER BY tb_user.created_at DESC
+    </select>
+
+
+    <select id="pagedList" parameterType="hashMap" resultType="org.example.smspr.dto.controller.TbUserDto$SelectResDto">
+        SELECT tb_user.id
+        FROM tb_user
+        WHERE tb_user.id is not NULL
+        <if test = "deleted != null and deleted !=''">AND tb_user.deleted = #{deleted}</if>
+        <if test = "process != null and process !=''">AND tb_user.process = #{process}</if>
+        <if test = "name != null and name !=''">AND tb_user.name LIKE CONCAT('%', #{name}, '%')</if>
+        <if test = "nick != null and nick !=''">AND tb_user.nick = #{nick}</if>
+        <if test = "phone != null and phone !=''">AND tb_user.phone LIKE CONCAT('%', #{phone})</if>
+
+        <if test = "orderby =='created_at'">ORDER BY tb_user.created_at </if>
+        <if test = "orderby =='name'">ORDER BY tb_user.name </if>
+        <if test = "orderway =='asc'">ASC</if>
+        <if test = "orderway == 'desc'">DESC</if>
+        LIMIT #{offset}, #{perpage} <!-- offset번째 게시물부터부터 perpage개의 게시물을 띄워주겠다.-->
+    </select>
+    <select id="pagedListCount" parameterType="hashMap" resultType="Integer">
+        SELECT count(tb_user.id) as listsize
+        FROM tb_user
+        WHERE tb_user.id is not NULL
+        <if test = "deleted != null and deleted !=''">AND tb_user.deleted = #{deleted}</if>
+        <if test = "process != null and process !=''">AND tb_user.process = #{process}</if>
+        <if test = "name != null and name !=''">AND tb_user.name LIKE CONCAT('%', #{name}, '%')</if>
+        <if test = "nick != null and nick !=''">AND tb_user.nick = #{nick}</if>
+        <if test = "phone != null and phone !=''">AND tb_user.phone LIKE CONCAT('%', #{phone})</if>
+    </select>
+
+    <select id="scrollList" parameterType="hashMap" resultType="org.example.smspr.dto.controller.TbUserDto$SelectResDto">
+        SELECT tb_user.id
+        FROM tb_user
+        WHERE tb_user.id is not NULL
+        <if test = "deleted != null and deleted !=''">AND tb_user.deleted = #{deleted}</if>
+        <if test = "process != null and process !=''">AND tb_user.process = #{process}</if>
+        <if test = "name != null and name !=''">AND tb_user.name LIKE CONCAT('%', #{name}, '%')</if>
+        <if test = "nick != null and nick !=''">AND tb_user.nick = #{nick}</if>
+        <if test = "phone != null and phone !=''">AND tb_user.phone LIKE CONCAT('%', #{phone})</if>
+
+        <if test = "orderby =='created_at'">
+            <if test = "orderway =='desc'">
+                -- cursor 값을 날짜 형식으로 변환하여 tb_user.created_at 필드와 비교합니다. 즉, cursor로 지정된 날짜 이후에 생성된 게시물만 결과에 포함됩니다.
+                <if test = "cursor != null and cursor !=''">AND STR_TO_DATE(#{cursor}, '%Y-%m-%d %H:%i:%s.%f') > tb_user.created_at </if>
+                ORDER BY tb_user.created_at DESC
+            </if>
+            <if test = "orderway =='asc'">
+                <if test = "cursor != null and cursor !=''">AND tb_user.created_at > STR_TO_DATE(#{cursor}, '%Y-%m-%d %H:%i:%s.%f')</if>
+                ORDER BY tb_user.created_at ASC
+            </if>
+        </if>
+
+        <if test = "orderby =='title'">
+            <if test = "orderway =='desc'">
+                <if test = "cursor != null and cursor !=''">AND #{cursor} > tb_user.title</if>
+                ORDER BY tb_user.title DESC
+            </if>
+            <if test = "orderway =='asc'">
+                <if test = "cursor != null and cursor !=''">AND tb_user.title > #{cursor}</if>
+                ORDER BY tb_user.title ASC
+            </if>
+        </if>
+
+--      제한을 0부터 perpage까지 두겠다. (perpage개수만큼 띄워주겠다.)
+        LIMIT 0, #{perpage}
+
+    </select>
+
+</mapper>
